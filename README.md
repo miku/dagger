@@ -16,3 +16,51 @@ Work in progress:
 ```sh
 $ go run example/example.go
 ```
+
+----
+
+What worked:
+
+* Split Task interface into Runner, Outputter, Requirer.
+* Easy to intergrate standalone files:
+
+        type OutputFunc string
+
+        func (f OutputFunc) Output() dagger.Target {
+            return dagger.LocalTarget{Path: f.filename}
+        }
+
+        ...
+
+        type SomeTask struct {}
+
+        func (t SomeTask) Requires() dagger.TaskMap {
+            return dagger.TaskMap{
+                "x": OutputFunc("/path/to/file"),
+            }
+        }
+
+----
+
+What didn't work:
+
+Within `Run()` we need access to the most concrete types, whereas in
+`Requires()` and `Output()` we would like to return some interface.
+
+If we want to force the return value of `Output()` to fulfill an interface,
+we can write:
+
+    // Output fulfills the Outputter interface.
+    func (task BogusAggregation) Output() dagger.Target {
+        return dagger.LocalTarget{Path: dagger.AutoPathExt(task, "tsv")}
+    }
+
+But inside `Run` we want to `Open`, `Write` or `Close`. Alternative:
+
+    var _ dagger.Target = dagger.LocalTarget{}
+
+But then, we cannot check for the interface to the task struct.
+
+Example: http://play.golang.org/p/VeGcg4pc4y
+
+Similar on the input side. Targets can be heterogeneous, files, database, etc.

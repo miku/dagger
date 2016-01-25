@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"code.google.com/p/vitess/go/ioutil2"
+	"github.com/youtube/vitess/go/ioutil2"
 )
 
 func WriteFileAtomic(filename string, data []byte, perm os.FileMode) error {

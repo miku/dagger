@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/miku/structs"
+	"github.com/fatih/structs"
 )
 
 func TaskDeps(r Outputter) map[Outputter][]Outputter {

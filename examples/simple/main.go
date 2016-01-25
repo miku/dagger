@@ -11,6 +11,14 @@ import (
 	"github.com/gophergala2016/dagger"
 )
 
+type OutputFunc struct {
+	filename string
+}
+
+func (f OutputFunc) Output() dagger.Target {
+	return dagger.LocalTarget{Path: f.filename}
+}
+
 // BogusData creates some bogus data.
 type BogusData struct {
 	Length int `default:"100"`
